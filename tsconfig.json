@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "outDir": "./dist", // Output directory for compiled JavaScript files
+    "rootDir": "./src", // Root directory for source files
+    "module": "commonjs", // Use ES modules
+    "target": "ES6", // Use the latest ECMAScript features
+    "moduleResolution": "node",
+    "strict": true, // Enable all strict type-checking options
+    // "module": "CommonJS", // Use CommonJS for Node.js compatibility
+    "esModuleInterop": true, // Allow default imports from modules with "export ="
+    // "target": "ES2017", // Target modern JavaScript features
+    "lib": ["ESNext"], // Include the latest JavaScript features
+    "resolveJsonModule": true, // Allow importing JSON files
+    "skipLibCheck": true, // Skip type checking for declaration files
+    "forceConsistentCasingInFileNames": true, // Enforce case-sensitive imports
+    "noImplicitReturns": true, // Ensure all functions explicitly return a value
+    "noUnusedLocals": true, // Report unused local variables
+    "noUnusedParameters": true, // Report unused function parameters
+    "noFallthroughCasesInSwitch": true, // Prevent fallthrough in switch statements
+    "strictNullChecks": true, // Ensure null/undefined are handled explicitly
+    "types": ["jest"]
+  },
+  "include": ["src/**/*.ts"], // Include all TypeScript files in src directory
+  "exclude": ["node_modules", "dist"] // Exclude node_modules and dist directory
+}
