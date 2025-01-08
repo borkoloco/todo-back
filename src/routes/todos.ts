@@ -7,6 +7,24 @@ import { TodoSchema } from "../schemas/todo";
 
 const router = Router();
 
+// Add Swagger security scheme for Bearer Auth
+/**
+ * @swagger
+ * components:
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ */
+
+/**
+ * @swagger
+ * tags:
+ *   name: Todos
+ *   description: Todo operations
+ */
+
 router.use(authMiddleware);
 
 router.get(
@@ -56,18 +74,13 @@ router.get(
 
 /**
  * @swagger
- * tags:
- *   name: Todos
- *   description: Todo operations
- */
-
-/**
- * @swagger
  * /api/todos:
  *   post:
  *     summary: Create a new Todo
- *     description: Create a new Todo item.
+ *     description: Create a new Todo item for the authenticated user.
  *     tags: [Todos]
+ *     security:
+ *       - bearerAuth: []  # This specifies Bearer token is required for this route
  *     requestBody:
  *       required: true
  *       content:
@@ -79,6 +92,10 @@ router.get(
  *                 type: string
  *                 description: Title of the todo
  *                 example: "Buy groceries"
+ *               status:
+ *                 type: boolean
+ *                 description: Status of the todo (completed or not)
+ *                 example: false
  *             required:
  *               - title
  *     responses:
@@ -90,7 +107,10 @@ router.get(
  *               $ref: '#/components/schemas/Todo'
  *       400:
  *         description: Invalid input
+ *       401:
+ *         description: Unauthorized
  */
+
 router.post(
   "/",
   validate(TodoSchema),
@@ -142,6 +162,26 @@ router.put(
         res.status(404).json({ message: "Todo not found" });
         return;
       }
+
+      res.status(200).json(todo);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+router.put(
+  "/:id/status",
+  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+      const todo = await Todo.findById(id);
+      if (!todo) {
+        res.status(404).json({ message: "Todo not found" });
+        return;
+      }
+      todo.status = !todo.status;
+      await todo.save();
 
       res.status(200).json(todo);
     } catch (error) {

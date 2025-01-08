@@ -17,10 +17,23 @@ const options = {
             _id: { type: "string" },
             title: { type: "string" },
             status: { type: "boolean" },
+            userId: { type: "string" },
           },
         },
       },
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+        },
+      },
     },
+    security: [
+      {
+        bearerAuth: [],
+      },
+    ],
   },
   apis: ["./src/routes/todos.ts"],
 };
