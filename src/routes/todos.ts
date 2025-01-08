@@ -7,6 +7,13 @@ import { TodoSchema } from "../schemas/todo";
 
 const router = Router();
 
+/**
+ * @swagger
+ * tags:
+ *   name: Todos
+ *   description: Todo operations
+ */
+
 // Add Swagger security scheme for Bearer Auth
 /**
  * @swagger
@@ -18,15 +25,29 @@ const router = Router();
  *       bearerFormat: JWT
  */
 
-/**
- * @swagger
- * tags:
- *   name: Todos
- *   description: Todo operations
- */
-
 router.use(authMiddleware);
 
+/**
+ * @swagger
+ * /api/todos:
+ *   get:
+ *     summary: Get all Todos for the authenticated user
+ *     description: Retrieve all Todo items for the authenticated user.
+ *     tags: [Todos]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: A list of Todo items
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Todo'
+ *       401:
+ *         description: Unauthorized
+ */
 router.get(
   "/",
   async (
@@ -49,6 +70,34 @@ router.get(
   }
 );
 
+/**
+ * @swagger
+ * /api/todos/{id}:
+ *   get:
+ *     summary: Get a Todo by ID
+ *     description: Retrieve a single Todo item by its ID for the authenticated user.
+ *     tags: [Todos]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: The Todo ID
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: The Todo item
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Todo'
+ *       404:
+ *         description: Todo not found
+ *       401:
+ *         description: Unauthorized
+ */
 router.get(
   "/:id",
   async (
@@ -142,6 +191,53 @@ router.post(
   }
 );
 
+/**
+ * @swagger
+ * /api/todos/{id}:
+ *   put:
+ *     summary: Update a Todo by ID
+ *     description: Update the Todo item with the specified ID for the authenticated user.
+ *     tags: [Todos]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: The Todo ID
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 description: Title of the todo
+ *                 example: "Buy groceries"
+ *               status:
+ *                 type: boolean
+ *                 description: Status of the todo (completed or not)
+ *                 example: false
+ *             required:
+ *               - title
+ *     responses:
+ *       200:
+ *         description: The updated Todo item
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Todo'
+ *       400:
+ *         description: Invalid input
+ *       404:
+ *         description: Todo not found
+ *       401:
+ *         description: Unauthorized
+ */
 router.put(
   "/:id",
   validate(TodoSchema),
@@ -190,6 +286,30 @@ router.put(
   }
 );
 
+/**
+ * @swagger
+ * /api/todos/{id}:
+ *   delete:
+ *     summary: Delete a Todo by ID
+ *     description: Delete the Todo item with the specified ID for the authenticated user.
+ *     tags: [Todos]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: The Todo ID
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Todo deleted
+ *       404:
+ *         description: Todo not found
+ *       401:
+ *         description: Unauthorized
+ */
 router.delete(
   "/:id",
   async (
